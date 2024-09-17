@@ -4,11 +4,16 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/cemtanrikut/user-service/cmd/user-service/main.go/internal/user"
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	// Router oluşturuyoruz
+	repo := user.NewUserRepository()
+	service := user.NewUserService(repo)
+	handler := user.NewUserHandler(service)
+
+	// generate route
 	r := mux.NewRouter()
 
 	// Endpoint for health check
@@ -16,6 +21,8 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
+	r.HandleFunc("/users", handler.CreateUserHandler).Methods("POST")
+	// http.ListenAndServe(":8080", r)
 
 	// Start server
 	log.Println("Server is starting on port 8080...")

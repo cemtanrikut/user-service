@@ -30,3 +30,26 @@ func (s *UserService) CreateUser(firstName, lastName, nickname, email, password,
 
 	return s.repo.AddUser(user)
 }
+
+// UpdateUser updates an existing user
+func (s *UserService) UpdateUser(id, firstName, lastName, nickname, email, country string) (User, error) {
+	// Kullanıcıyı repository'den çekiyoruz
+	existingUser, err := s.repo.GetUser(id)
+	if err != nil {
+		return User{}, err
+	}
+
+	// Kullanıcı bilgilerini güncelliyoruz
+	updatedUser := User{
+		ID:        existingUser.ID,
+		FirstName: firstName,
+		LastName:  lastName,
+		Nickname:  nickname,
+		Password:  existingUser.Password, // don't change password
+		Email:     email,
+		Country:   country,
+		CreatedAt: existingUser.CreatedAt,
+	}
+
+	return s.repo.UpdateUser(id, updatedUser)
+}
