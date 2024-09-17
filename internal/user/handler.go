@@ -3,6 +3,7 @@ package user
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -83,4 +84,24 @@ func (h *UserHandler) DeleteUserHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// ListUsersHandler handles returning a paginated list of users with optional country filtering
+func (h *UserHandler) ListUsersHandler(w http.ResponseWriter, r *http.Request) {
+	country := r.URL.Query().Get("country")
+	limit := 10 // Varsayılan limit
+	offset := 0 // Varsayılan offset
+
+	// limit ve offset parametrelerini alıyoruz
+	if l := r.URL.Query().Get("limit"); l != "" {
+		limit, _ = strconv.Atoi(l)
+	}
+	if o := r.URL.Query().Get("offset"); o != "" {
+		offset, _ = strconv.Atoi(o)
+	}
+
+	users := h.service.ListUsers(country, limit, offset)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(users)
 }

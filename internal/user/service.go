@@ -58,3 +58,8 @@ func (s *UserService) UpdateUser(id, firstName, lastName, nickname, email, count
 func (s *UserService) DeleteUser(id string) error {
 	return s.repo.DeleteUser(id)
 }
+
+// ListUsers returns a list of users with pagination and filtering by country
+func (s *UserService) ListUsers(country string, limit, offset int) []User {
+	return s.repo.ListUsers(country, limit, offset)
+}

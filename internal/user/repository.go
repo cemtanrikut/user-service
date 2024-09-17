@@ -78,3 +78,30 @@ func (r *UserRepository) DeleteUser(id string) error {
 	delete(r.users, id)
 	return nil
 }
+
+// ListUsers returns a paginated list of users with optional country filtering
+func (r *UserRepository) ListUsers(country string, limit, offset int) []User {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	var result []User
+	for _, user := range r.users {
+		if country == "" || user.Country == country {
+			result = append(result, user)
+		}
+	}
+
+	// pagination
+	start := offset
+	end := offset + limit
+
+	if start > len(result) {
+		return []User{}
+	}
+
+	if end > len(result) {
+		end = len(result)
+	}
+
+	return result[start:end]
+}
