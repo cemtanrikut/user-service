@@ -53,3 +53,8 @@ func (s *UserService) UpdateUser(id, firstName, lastName, nickname, email, count
 
 	return s.repo.UpdateUser(id, updatedUser)
 }
+
+// DeleteUser deletes a user by ID
+func (s *UserService) DeleteUser(id string) error {
+	return s.repo.DeleteUser(id)
+}
