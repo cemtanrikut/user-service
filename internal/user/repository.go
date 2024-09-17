@@ -79,19 +79,47 @@ func (r *UserRepository) DeleteUser(id string) error {
 	return nil
 }
 
-// ListUsers returns a paginated list of users with optional country filtering
-func (r *UserRepository) ListUsers(country string, limit, offset int) []User {
+// ListUsers returns a paginated list of users with optional filtering by any field
+func (r *UserRepository) ListUsers(filters map[string]string, limit, offset int) []User {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
 	var result []User
 	for _, user := range r.users {
-		if country == "" || user.Country == country {
+		match := true
+
+		// Her bir filtre alanına göre karşılaştırma yapıyoruz
+		for key, value := range filters {
+			switch key {
+			case "first_name":
+				if user.FirstName != value {
+					match = false
+				}
+			case "last_name":
+				if user.LastName != value {
+					match = false
+				}
+			case "nickname":
+				if user.Nickname != value {
+					match = false
+				}
+			case "email":
+				if user.Email != value {
+					match = false
+				}
+			case "country":
+				if user.Country != value {
+					match = false
+				}
+			}
+		}
+
+		if match {
 			result = append(result, user)
 		}
 	}
 
-	// pagination
+	// Sayfalama işlemi
 	start := offset
 	end := offset + limit
 

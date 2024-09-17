@@ -86,13 +86,30 @@ func (h *UserHandler) DeleteUserHandler(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// ListUsersHandler handles returning a paginated list of users with optional country filtering
+// ListUsersHandler handles returning a paginated list of users with optional filtering
 func (h *UserHandler) ListUsersHandler(w http.ResponseWriter, r *http.Request) {
-	country := r.URL.Query().Get("country")
+	filters := make(map[string]string)
+
+	// Query parametrelerine göre filtreler ekliyoruz
+	if v := r.URL.Query().Get("first_name"); v != "" {
+		filters["first_name"] = v
+	}
+	if v := r.URL.Query().Get("last_name"); v != "" {
+		filters["last_name"] = v
+	}
+	if v := r.URL.Query().Get("nickname"); v != "" {
+		filters["nickname"] = v
+	}
+	if v := r.URL.Query().Get("email"); v != "" {
+		filters["email"] = v
+	}
+	if v := r.URL.Query().Get("country"); v != "" {
+		filters["country"] = v
+	}
+
+	// limit ve offset parametreleri (sayfalama)
 	limit := 10 // Varsayılan limit
 	offset := 0 // Varsayılan offset
-
-	// limit ve offset parametrelerini alıyoruz
 	if l := r.URL.Query().Get("limit"); l != "" {
 		limit, _ = strconv.Atoi(l)
 	}
@@ -100,7 +117,8 @@ func (h *UserHandler) ListUsersHandler(w http.ResponseWriter, r *http.Request) {
 		offset, _ = strconv.Atoi(o)
 	}
 
-	users := h.service.ListUsers(country, limit, offset)
+	// Kullanıcıları filtre ve sayfalama ile listeliyoruz
+	users := h.service.ListUsers(filters, limit, offset)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
