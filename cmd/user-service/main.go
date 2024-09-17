@@ -21,8 +21,18 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
+
+	// Create user
 	r.HandleFunc("/users", handler.CreateUserHandler).Methods("POST")
-	// http.ListenAndServe(":8080", r)
+
+	// Update user
+	r.HandleFunc("/users/{id}", handler.UpdateUserHandler).Methods("PUT")
+
+	// Delete user
+	r.HandleFunc("/users/{id}", handler.DeleteUserHandler).Methods("DELETE")
+
+	// Filter and list users
+	r.HandleFunc("/users", handler.ListUsersHandler).Methods("GET")
 
 	// Start server
 	log.Println("Server is starting on port 8080...")
