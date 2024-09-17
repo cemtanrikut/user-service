@@ -1,4 +1,4 @@
-module github.com/cemtanrikut/user-service.main.go
+module github.com/cemtanrikut/user-service/cmd/user-service/main.go
 
 go 1.22.1
 
