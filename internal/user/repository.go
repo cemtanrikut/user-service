@@ -88,7 +88,7 @@ func (r *UserRepository) ListUsers(filters map[string]string, limit, offset int)
 	for _, user := range r.users {
 		match := true
 
-		// Her bir filtre alanına göre karşılaştırma yapıyoruz
+		// all filters
 		for key, value := range filters {
 			switch key {
 			case "first_name":
@@ -119,7 +119,7 @@ func (r *UserRepository) ListUsers(filters map[string]string, limit, offset int)
 		}
 	}
 
-	// Sayfalama işlemi
+	// pagination
 	start := offset
 	end := offset + limit
 

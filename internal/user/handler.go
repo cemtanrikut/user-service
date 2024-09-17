@@ -107,7 +107,7 @@ func (h *UserHandler) ListUsersHandler(w http.ResponseWriter, r *http.Request) {
 		filters["country"] = v
 	}
 
-	// limit ve offset parametreleri (sayfalama)
+	// limit ve offset param - pagination
 	limit := 10 // Varsayılan limit
 	offset := 0 // Varsayılan offset
 	if l := r.URL.Query().Get("limit"); l != "" {
@@ -117,7 +117,7 @@ func (h *UserHandler) ListUsersHandler(w http.ResponseWriter, r *http.Request) {
 		offset, _ = strconv.Atoi(o)
 	}
 
-	// Kullanıcıları filtre ve sayfalama ile listeliyoruz
+	// Listing Users with filter and pagination
 	users := h.service.ListUsers(filters, limit, offset)
 
 	w.Header().Set("Content-Type", "application/json")
